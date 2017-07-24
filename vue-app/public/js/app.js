@@ -35,7 +35,8 @@ new Vue({
         skills: [],
         name: '',
         description: '',
-        errors: new Errors()
+        errors: new Errors(),
+        projects: []
     },
 
     mounted() {
@@ -43,6 +44,7 @@ new Vue({
 
         axios.get('skills').then(response => this.skills = response.data);
         // this.$http.get('skills').then(response => this.skills = response.data);
+        axios.get('/projects').then(response => this.projects = response.data);
     },
 
     methods: {
@@ -55,9 +57,11 @@ new Vue({
         onSuccess(response) {
             alert(response.data.message);
 
-            form.reset();
-            // this.name = '';
-            // this.description = '';
+            // form.reset();
+            this.name = '';
+            this.description = '';
+
+            axios.get('/projects').then(response => this.projects = response.data);
         }
     }
 });

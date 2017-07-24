@@ -13,7 +13,7 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        //
+        return \App\Project::orderBy('created_at', 'desc')->get();
     }
 
     /**
