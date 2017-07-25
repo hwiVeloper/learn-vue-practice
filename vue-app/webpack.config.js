@@ -1,58 +1,26 @@
-let webpack = require('webpack');
-let path = require('path');
 
-module.exports = {
-    entry: {
-        app: './resources/assets/js/app.js',
-        vendor: ['vue', 'axios']
-    },
+/**
+ * As our first step, we'll pull in the user's webpack.mix.js
+ * file. Based on what the user requests in that file,
+ * a generic config object will be constructed for us.
+ */
 
-    output: {
-        path: path.resolve(__dirname, 'public/js'),
-        filename: '[name].js',
-        publicPath: './public'
-    },
+require('../src/index');
+require(Mix.paths.mix());
 
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader'
-            }
-        ]
-    },
+/**
+ * Just in case the user needs to hook into this point
+ * in the build process, we'll make an announcement.
+ */
 
-    resolve: {
-        alias: {
-            'vue$': 'vue/dist/vue.common.js'
-        },
+Mix.dispatch('init', Mix);
 
-        plugins: [
-            new webpack.optimize.CommonsChunkPlugin({
-                names: ['vendor']
-            })
-        ]
-    },
+/**
+ * Now that we know which build tasks are required by the
+ * user, we can dynamically create a configuration object
+ * for Webpack. And that's all there is to it. Simple!
+ */
 
-    plugins: []
-}
+let WebpackConfig = require('../src/builder/WebpackConfig');
 
-if (process.env.NODE_ENV === 'production') {
-    module.exports.plugins.push(
-        new webpack.optimize.UglifyJsPlugin({
-            sourcemap: true,
-            compress: {
-                warnings: false
-            }
-        })
-    );
-
-    module.exports.plugins.push(
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: 'production'
-            }
-        })
-    );
-}
+module.exports = new WebpackConfig().build();

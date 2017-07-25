@@ -6,12 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Laravel</title>
+        <link rel="stylesheet" href="/css/app.css">
     </head>
     <body>
         <div class="" id="app">
-            <ul>
-                <li v-for="skill in skills" v-text="skill"></li>
-            </ul>
+            <notification></notification>
         </div>
 
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
