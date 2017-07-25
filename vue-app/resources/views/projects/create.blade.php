@@ -16,6 +16,8 @@
     </head>
     <body>
         <div class="container" id="app">
+            <example></example>
+
             <form class="" action="/projects" method="POST" @submit.prevent="onSubmit" @keydown="form.errors.clear($event.target.name)">
                 <div class="field">
                     <label for="name" class="label">Project Name : </label>
@@ -42,10 +44,7 @@
             {{-- @include('projects.list') --}}
         </div>
 
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-        <script type="text/javascript" src="https://unpkg.com/vue@2.1.6/dist/vue.js"></script>
-
+        <script src="/js/vendor.js"></script>
         <script src="/js/app.js"></script>
     </body>
 </html>
