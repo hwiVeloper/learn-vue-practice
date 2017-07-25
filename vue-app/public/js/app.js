@@ -24,7 +24,79 @@ class Errors {
     }
 
     clear(field) {
-        delete this.errors[field];
+        if (field) {
+            delete this.errors[field];
+
+            return;
+        }
+
+        this.error = {};
+    }
+}
+
+class Form {
+    constructor(data) {
+        this.orginalData = data;
+
+        for (let field in data) {
+            this[field] = data[field];
+        }
+
+        this.errors = new Errors();
+    }
+
+    data() {
+        let data = {};
+
+        for (let property in this.originalData) {
+            data[property] = this[property];
+        }
+
+        return data;
+    }
+
+    reset() {
+        for (let field in this.originalData) {
+            this[field] = '';
+        }
+
+        this.errors.clear();
+    }
+
+    post(url) {
+        return this.submit('post', url)
+    }
+
+    delete(url) {
+        return this.submit('delete', url);
+    }
+
+    submit(requestType, url) {
+        return new Promise((resolve, reject) => {
+            axios[requestType](url, this.data())
+                .then(response => {
+                    this.onSuccess(response.data);
+
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    this.onFail(error.response.data);
+
+                    reject(error.response.data);
+                });
+        });
+    }
+
+    onSuccess(data) {
+        alert(data.message);
+
+        this.errors.clear();
+
+        this.reset();
+    }
+
+    onFail(errors) {
+        this.errors.record(errors);
     }
 }
 
@@ -32,36 +104,18 @@ new Vue({
     el: '#app',
 
     data: {
-        skills: [],
-        name: '',
-        description: '',
-        errors: new Errors(),
-        projects: []
-    },
-
-    mounted() {
-        // Make an ajax request to our server -> skills
-
-        axios.get('skills').then(response => this.skills = response.data);
-        // this.$http.get('skills').then(response => this.skills = response.data);
-        axios.get('/projects').then(response => this.projects = response.data);
+        form: new Form({
+            name: '',
+            description: ''
+        }),
     },
 
     methods: {
         onSubmit() {
-            axios.post('/projects', this.$data)
-                .then(this.onSuccess)
-                .catch(error => this.errors.record(error.response.data));
-        },
-
-        onSuccess(response) {
-            alert(response.data.message);
-
-            // form.reset();
-            this.name = '';
-            this.description = '';
-
-            axios.get('/projects').then(response => this.projects = response.data);
+            // this.form.submit('post', '/projects')
+            //     .then(data => console.log(data))
+            //     .catch(errors => console.log(errors));
+            this.form.delete('/projects');
         }
     }
 });
